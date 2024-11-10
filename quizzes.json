@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Quiz de Mathématiques",
+    "description": "Testez vos connaissances en mathématiques.",
+    "date": "2024-10-18",
+    "time": "20:17",
+    "questions": [
+      {
+        "question_id": 1,
+        "question": "Quelle est la racine carrée de 16?",
+        "options": ["4", "2", "8", "16"],
+        "correct_answer": "4"
+      },
+      {
+        "question_id": 2,
+        "question": "Quel est le produit de 6 et 7?",
+        "options": ["42", "36", "48", "56"],
+        "correct_answer": "42"
+      }
+    ],
+    "participants": []
+  }
+]
