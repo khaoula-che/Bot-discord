@@ -114,10 +114,11 @@ class MemberCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="register")
-    async def register(self, ctx):
+    # Convertir "register" en commande slash pour qu'elle puisse être éphémère
+    @discord.app_commands.command(name="register", description="Inscrivez-vous à la plateforme")
+    async def register(self, interaction: discord.Interaction):
         view = YearSelectView()
-        await ctx.send("Veuillez sélectionner votre année d'étude :", view=view)
+        await interaction.response.send_message("Veuillez sélectionner votre année d'étude :", view=view, ephemeral=True)
 
     @commands.command(name="me")
     async def me(self, ctx):
@@ -146,8 +147,6 @@ class MemberCommands(commands.Cog):
             await ctx.send(embed=embed)
         else:
             await ctx.send("❗ Vous n'êtes pas encore enregistré. Utilisez la commande `!register` pour vous inscrire.")
-
-
 
 async def setup(bot):
     await bot.add_cog(MemberCommands(bot))

@@ -10,9 +10,6 @@ load_dotenv()
 # Récupérer le TOKEN depuis les variables d'environnement
 TOKEN = os.getenv('TOKEN')
 
-# Vérifier si le TOKEN est chargé
-if not TOKEN:
-    raise ValueError("Erreur : le token Discord est manquant. Assurez-vous que le fichier .env contient DISCORD_TOKEN.")
 
 # Configurez votre bot avec les intents
 intents = discord.Intents.default()
