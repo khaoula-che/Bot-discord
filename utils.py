@@ -1,6 +1,8 @@
 import os
 import json
+from dotenv import load_dotenv
 
+load_dotenv()
 def load_json(file):
     """Charge le contenu d'un fichier JSON, ou retourne une liste vide si le fichier n'existe pas ou est vide."""
     if os.path.exists(file):

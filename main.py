@@ -2,8 +2,17 @@ import discord
 from discord.ext import commands
 from keep_alive import keep_alive
 import os  # Pour récupérer les variables d'environnement
+from dotenv import load_dotenv
 
+# Charger les variables d'environnement
+load_dotenv()
+
+# Récupérer le TOKEN depuis les variables d'environnement
 TOKEN = os.getenv('TOKEN')
+
+# Vérifier si le TOKEN est chargé
+if not TOKEN:
+    raise ValueError("Erreur : le token Discord est manquant. Assurez-vous que le fichier .env contient DISCORD_TOKEN.")
 
 # Configurez votre bot avec les intents
 intents = discord.Intents.default()
