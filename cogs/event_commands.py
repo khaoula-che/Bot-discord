@@ -31,15 +31,13 @@ class Event(commands.Cog):
             ),
             color=discord.Color.blue()
         )
+        message = await ctx.send(embed=embed)
 
-        # Send the event details as a direct message (DM) to the user
-        try:
-            await ctx.author.send(embed=embed)
-            await ctx.send("L'annonce de l'événement a été envoyée en message privé !")
-        except discord.errors.Forbidden:
-            await ctx.send("Je n'ai pas pu envoyer l'annonce en message privé. Vérifiez vos paramètres de confidentialité.")
-        
-        # Initialize presence file
+        await message.delete()
+
+        await message.add_reaction("✅")
+        await message.add_reaction("❌")
+
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump({"date": event_data['date'], "participants": []}, presence_file, indent=4)
 
