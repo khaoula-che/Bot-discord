@@ -31,15 +31,20 @@ class Event(commands.Cog):
             ),
             color=discord.Color.blue()
         )
+
+        # Envoyer le message dans le canal, mais il sera supprimé après l'envoi
         message = await ctx.send(embed=embed)
 
+        # Supprimer le message après un court délai pour le rendre invisible aux autres
         await message.delete()
-
         await message.add_reaction("✅")
         await message.add_reaction("❌")
 
+        # Initialise le fichier de présence
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump({"date": event_data['date'], "participants": []}, presence_file, indent=4)
+
+        await ctx.send("L'annonce de l'événement a été envoyée, mais elle est maintenant supprimée pour que seule la personne qui a invoqué la commande puisse la voir.")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
