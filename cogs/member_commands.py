@@ -18,7 +18,6 @@ class RegisterModal(discord.ui.Modal):
         self.add_item(self.study_mode)
 
     async def on_submit(self, interaction: discord.Interaction):
-        # Enregistre les informations de l'utilisateur
         user_data = {
             "username": str(interaction.user),
             "first_name": self.first_name.value,
@@ -27,7 +26,6 @@ class RegisterModal(discord.ui.Modal):
             "study_mode": self.study_mode.value or "Non spécifié"
         }
 
-        # Chercher le rôle "Membre" dans le serveur
         role = discord.utils.get(interaction.guild.roles, name="Membre")
         
         # Attribuer le rôle à l'utilisateur s'il existe
