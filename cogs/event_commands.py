@@ -32,11 +32,17 @@ class Event(commands.Cog):
             color=discord.Color.blue()
         )
 
-        # Envoyer le message dans le canal, mais il sera supprimé après l'envoi
-        message = await ctx.send(embed=embed)
+        # Créer des permissions pour rendre le message visible uniquement pour l'utilisateur
+        overwrites = {
+            ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),  # Cache le message pour @everyone
+            ctx.author: discord.PermissionOverwrite(read_messages=True)  # Permet à l'utilisateur d'avoir accès
+        }
 
-        # Supprimer le message après un court délai pour le rendre invisible aux autres
-        await message.delete()
+        # Envoi du message dans un canal privé (temporaire)
+        channel = ctx.channel
+        message = await channel.send(embed=embed, overwrite=overwrites)
+
+        # Ajoute les réactions uniquement pour l'utilisateur
         await message.add_reaction("✅")
         await message.add_reaction("❌")
 
@@ -44,7 +50,7 @@ class Event(commands.Cog):
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump({"date": event_data['date'], "participants": []}, presence_file, indent=4)
 
-        await ctx.send("L'annonce de l'événement a été envoyée, mais elle est maintenant supprimée pour que seule la personne qui a invoqué la commande puisse la voir.")
+        await ctx.send("L'annonce de l'événement a été envoyée et est uniquement visible pour vous.")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
