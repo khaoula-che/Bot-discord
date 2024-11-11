@@ -43,15 +43,19 @@ class Event(commands.Cog):
                 with open(PRESENCE_FILE, 'w') as presence_file:
                     json.dump({"date": event_data['date'], "participants": []}, presence_file, indent=4)
 
-                await ctx.send("L'annonce de l'événement a été publiée avec succès.", ephemeral=True)
+                # Envoyer un message de confirmation visible uniquement par l'auteur de la commande
+                await ctx.send("L'annonce de l'événement a été publiée avec succès dans le canal 'événements-à-venir'.", ephemeral=True)
             else:
-                await ctx.send("Le canal 'événements-à-venir' n'a pas été trouvé.", ephemeral=True)
+                # Message d'erreur visible uniquement par l'auteur de la commande
+                await ctx.send("Le canal 'événements-à-venir' n'a pas été trouvé. Veuillez vérifier le nom du canal.", ephemeral=True)
         except Exception as e:
-            await ctx.send(f"Une erreur s'est produite : {str(e)}", ephemeral=True)
+            # Message d'erreur visible uniquement par l'auteur de la commande
+            await ctx.send(f"Une erreur s'est produite lors de l'annonce de l'événement : {str(e)}", ephemeral=True)
 
     @annonce_event.error
     async def annonce_event_error(self, ctx, error):
         if isinstance(error, commands.MissingAnyRole):
+            # Message d'erreur visible uniquement par l'auteur de la commande
             await ctx.send("Vous n'avez pas la permission d'utiliser cette commande. Seules la Présidente et la Vice-Présidente peuvent l'utiliser.", ephemeral=True)
 
     # Le reste du code reste inchangé...
