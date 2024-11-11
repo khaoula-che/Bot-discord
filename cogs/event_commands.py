@@ -10,8 +10,9 @@ class Event(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="annonce_event")
-    async def annonce_event(self, ctx):
+    # Création de la commande Slash
+    @discord.app_commands.command(name="annonce_event", description="Annonce un événement pour tout le monde")
+    async def annonce_event(self, interaction: discord.Interaction):
         with open(EVENT_FILE, 'r') as file:
             event_data = json.load(file)
 
@@ -32,21 +33,22 @@ class Event(commands.Cog):
             color=discord.Color.blue()
         )
 
-        # Envoyer le message dans le canal
-        message = await ctx.send(embed=embed)
+        # Envoi de l'annonce de l'événement dans le canal pour tout le monde
+        await interaction.response.send_message(embed=embed)
 
-        # Ajouter les réactions avant de supprimer le message
+        # Ajout des réactions
+        message = await interaction.followup.send("L'annonce de l'événement a été envoyée dans le canal !")
         await message.add_reaction("✅")
         await message.add_reaction("❌")
-
-        await message.delete()
 
         # Initialise le fichier de présence
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump({"date": event_data['date'], "participants": []}, presence_file, indent=4)
 
-        await ctx.send("L'annonce de l'événement a été envoyée et immédiatement supprimée pour que seule la personne qui a invoqué la commande puisse la voir.")
+        # Réponse uniquement visible pour l'utilisateur ayant invoqué la commande
+        await interaction.user.send("L'annonce de l'événement a été envoyée et est visible pour tout le monde.")
 
+    # Listener pour gérer les réactions
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         if user.bot:
@@ -68,9 +70,10 @@ class Event(commands.Cog):
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump(presence_data, presence_file, indent=4)
 
-    @commands.command(name="confirm_presence")
+    # Commande de confirmation de présence, accessible seulement aux rôles spécifiés
+    @discord.app_commands.command(name="confirm_presence", description="Confirmer la présence des participants")
     @commands.has_any_role('Présidente', 'Vice-Présidente')
-    async def confirm_presence(self, ctx):
+    async def confirm_presence(self, interaction: discord.Interaction):
         with open(PRESENCE_FILE, 'r') as presence_file:
             presence_data = json.load(presence_file)
 
@@ -86,7 +89,7 @@ class Event(commands.Cog):
         for participant in presence_data["participants"]:
             embed.add_field(name=participant["name"], value="Présent ?", inline=False)
 
-        message = await ctx.send(embed=embed)
+        message = await interaction.response.send_message(embed=embed)
 
         for i in range(len(presence_data["participants"])):
             await message.add_reaction(f"{i+1}️⃣")
@@ -109,7 +112,7 @@ class Event(commands.Cog):
                     with open(USER_DATA_FILE, 'w') as user_data_file:
                         json.dump(user_data, user_data_file, indent=4)
 
-                    await ctx.send(f"Présence confirmée pour {presence_data['participants'][index]['name']}")
+                    await interaction.followup.send(f"Présence confirmée pour {presence_data['participants'][index]['name']}")
 
             except TimeoutError:
                 break
@@ -117,5 +120,10 @@ class Event(commands.Cog):
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump(presence_data, presence_file, indent=4)
 
+# Synchronisation des commandes Slash avec Discord
 async def setup(bot):
     await bot.add_cog(Event(bot))
+    await bot.tree.sync()  # Synchronisation des commandes Slash avec Discord
+
+
+# Lancement du bot avec `bot.run('TOKEN')` dans ton fichier principal
