@@ -38,7 +38,7 @@ class Event(commands.Cog):
             ctx.author: discord.PermissionOverwrite(read_messages=True)  # Permet à l'utilisateur d'avoir accès
         }
 
-        # Envoi du message dans un canal privé (temporaire)
+        # Envoi du message dans le canal (visible uniquement pour l'utilisateur)
         channel = ctx.channel
         message = await channel.send(embed=embed, overwrite=overwrites)
 
@@ -50,7 +50,8 @@ class Event(commands.Cog):
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump({"date": event_data['date'], "participants": []}, presence_file, indent=4)
 
-        await ctx.send("L'annonce de l'événement a été envoyée et est uniquement visible pour vous.")
+        # Réponse publique pour informer tout le monde
+        await ctx.send("L'annonce de l'événement a été envoyée. Seule la personne ayant invoqué la commande peut la voir pour le moment.")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
