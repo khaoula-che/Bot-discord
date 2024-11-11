@@ -13,6 +13,7 @@ class Event(commands.Cog):
     # Création de la commande Slash
     @discord.app_commands.command(name="annonce_event", description="Annonce un événement pour tout le monde")
     async def annonce_event(self, interaction: discord.Interaction):
+        # Charger les données de l'événement
         with open(EVENT_FILE, 'r') as file:
             event_data = json.load(file)
 
@@ -34,7 +35,8 @@ class Event(commands.Cog):
         )
 
         # Envoi de l'annonce de l'événement dans le canal pour tout le monde
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message("L'annonce de l'événement est maintenant visible pour tout le monde!", ephemeral=True)
+        await interaction.followup.send(embed=embed)
 
         # Ajout des réactions
         message = await interaction.followup.send("L'annonce de l'événement a été envoyée dans le canal !")
@@ -125,5 +127,3 @@ async def setup(bot):
     await bot.add_cog(Event(bot))
     await bot.tree.sync()  # Synchronisation des commandes Slash avec Discord
 
-
-# Lancement du bot avec `bot.run('TOKEN')` dans ton fichier principal
