@@ -32,25 +32,20 @@ class Event(commands.Cog):
             color=discord.Color.blue()
         )
 
-        # Créer des permissions pour que la commande soit visible uniquement pour l'utilisateur
-        overwrites = {
-            ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),  # Cache la commande pour @everyone
-            ctx.author: discord.PermissionOverwrite(read_messages=True)  # Permet à l'utilisateur d'avoir accès
-        }
+        # Envoyer le message dans le canal
+        message = await ctx.send(embed=embed)
 
-        # Envoi du message de la commande dans le canal (visible uniquement pour l'utilisateur)
-        message = await ctx.send(embed=embed, overwrite=overwrites)
-
-        # Ajoute les réactions uniquement pour l'utilisateur
+        # Ajouter les réactions avant de supprimer le message
         await message.add_reaction("✅")
         await message.add_reaction("❌")
+
+        await message.delete()
 
         # Initialise le fichier de présence
         with open(PRESENCE_FILE, 'w') as presence_file:
             json.dump({"date": event_data['date'], "participants": []}, presence_file, indent=4)
 
-        # Réponse publique : L'annonce de l'événement est maintenant envoyée
-        await ctx.send("L'annonce de l'événement a été envoyée et est maintenant visible pour tout le monde.")
+        await ctx.send("L'annonce de l'événement a été envoyée et immédiatement supprimée pour que seule la personne qui a invoqué la commande puisse la voir.")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
