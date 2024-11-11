@@ -18,7 +18,7 @@ intents.guilds = True
 intents.message_content = True
 
 # Initialisez le bot
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='/', intents=intents)
 
 # Fonction pour charger les cogs
 async def load_cogs():
