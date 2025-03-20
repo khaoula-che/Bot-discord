@@ -1,20 +1,6 @@
 import discord
-import json
-import os
 from discord.ext import commands
 from discord import app_commands
-
-USER_DATA_FILE = 'user_data.json'
-
-def load_user_data():
-    if os.path.exists(USER_DATA_FILE):
-        with open(USER_DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {}
-
-def save_user_data(data):
-    with open(USER_DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
 
 class RegisterModal(discord.ui.Modal):
     def __init__(self):
@@ -32,18 +18,13 @@ class RegisterModal(discord.ui.Modal):
         self.add_item(self.study_mode)
 
     async def on_submit(self, interaction: discord.Interaction):
-        user_data = load_user_data()
-        
-        user_id = str(interaction.user.id)
-        user_data[user_id] = {
+        user_data = {
             "username": str(interaction.user),
             "first_name": self.first_name.value,
             "last_name": self.last_name.value,
             "class_name": self.class_name.value,
             "study_mode": self.study_mode.value or "Non spécifié"
         }
-        
-        save_user_data(user_data)
 
         role = discord.utils.get(interaction.guild.roles, name="Membre")
         
@@ -52,8 +33,9 @@ class RegisterModal(discord.ui.Modal):
             try:
                 await interaction.user.add_roles(role)
                 await interaction.response.send_message(
-                    "Inscription réussie\n"
-                    "Vous avez maintenant accès aux canaux réservés aux membres !",
+                    f"Inscription réussie\n"
+               
+                    f"Vous avez maintenant accès aux canaux réservés aux membres !",
                     ephemeral=True
                 )
             except discord.Forbidden:
@@ -70,10 +52,10 @@ class RegisterModal(discord.ui.Modal):
 class MemberCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+
     @app_commands.command(name="register", description="Inscrivez-vous au serveur")
     async def register(self, interaction: discord.Interaction):
-        await interaction.response.defer()  # Déférer l'interaction pour éviter une double reconnaissance
+        # Ouvre le modal pour l'inscription
         await interaction.response.send_modal(RegisterModal())
 
 async def setup(bot):
