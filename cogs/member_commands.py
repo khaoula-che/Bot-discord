@@ -70,10 +70,10 @@ class RegisterModal(discord.ui.Modal):
 class MemberCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+        
     @app_commands.command(name="register", description="Inscrivez-vous au serveur")
     async def register(self, interaction: discord.Interaction):
-        # Ouvre le modal pour l'inscription
+        await interaction.response.defer()  # Déférer l'interaction pour éviter une double reconnaissance
         await interaction.response.send_modal(RegisterModal())
 
 async def setup(bot):
